@@ -1,13 +1,22 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
+/** All main routes — same order desktop + mobile */
 const nav = [
+  { label: 'Home', to: '/' },
   { label: 'Programs', to: '/programs' },
   { label: 'TLBS Live', to: '/live' },
   { label: 'Resources', to: '/resources' },
   { label: 'Success Stories', to: '/success-stories' },
   { label: 'About', to: '/about' },
-];
+  { label: 'Free Training', to: '/free-training' },
+  { label: 'Contact', to: '/contact' },
+] as const;
+
+function navLinkActive(pathname: string, to: string): boolean {
+  if (to === '/') return pathname === '/';
+  return pathname === to;
+}
 
 const Header: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -20,24 +29,20 @@ const Header: React.FC = () => {
           TLBS
         </Link>
 
-        <nav className="hidden items-center gap-8 md:flex" aria-label="Primary">
+        <nav className="hidden flex-wrap items-center justify-end gap-x-5 gap-y-2 md:flex lg:gap-x-6" aria-label="Primary">
           {nav.map((item) => (
             <Link
               key={item.to}
               to={item.to}
               className={`text-[0.72rem] font-bold uppercase tracking-[0.12em] transition-colors ${
-                pathname === item.to ? 'text-tlbs-gold-lt' : 'text-tlbs-cream/70 hover:text-tlbs-cream'
+                navLinkActive(pathname, item.to)
+                  ? 'text-tlbs-gold-lt'
+                  : 'text-tlbs-cream/70 hover:text-tlbs-cream'
               }`}
             >
               {item.label}
             </Link>
           ))}
-          <Link
-            to="/free-training"
-            className="text-[0.72rem] font-bold uppercase tracking-[0.12em] text-tlbs-cream/55 hover:text-tlbs-cream"
-          >
-            Free Training
-          </Link>
           <Link
             to="/contact"
             className="rounded-tlbs bg-tlbs-gold px-5 py-2.5 text-[0.72rem] font-bold uppercase tracking-[0.06em] text-tlbs-black transition-colors hover:bg-tlbs-gold-lt"
@@ -65,18 +70,13 @@ const Header: React.FC = () => {
                 key={item.to}
                 to={item.to}
                 onClick={() => setMenuOpen(false)}
-                className="text-[0.78rem] font-bold uppercase tracking-[0.12em] text-tlbs-cream/90"
+                className={`text-[0.78rem] font-bold uppercase tracking-[0.12em] ${
+                  navLinkActive(pathname, item.to) ? 'text-tlbs-gold-lt' : 'text-tlbs-cream/90'
+                }`}
               >
                 {item.label}
               </Link>
             ))}
-            <Link
-              to="/free-training"
-              onClick={() => setMenuOpen(false)}
-              className="text-[0.78rem] font-bold uppercase tracking-[0.12em] text-tlbs-cream/70"
-            >
-              Free Training
-            </Link>
             <Link
               to="/contact"
               onClick={() => setMenuOpen(false)}
