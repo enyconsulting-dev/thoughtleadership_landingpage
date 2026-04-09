@@ -8,33 +8,31 @@ export default {
   theme: {
     extend: {
       colors: {
-        "primary": "#5a2d8b",
-        "primary-dark": "#3e1f60",
-        "accent": "#F59E0B", // Keeping for internal consistency if used elsewhere
-        "gold-roadmap": "#D4AF37", // Part 2 Gold
-        "gold-action": "#fbbf24",  // Part 3 Gold
-        "gold-action-hover": "#f59e0b",
-        "background-light": "#f7f6f8", // Updated
-        "background-dark": "#19141e",
-        "surface-light": "#ffffff",
-        "surface-dark": "#2a2430",
-        "off-white": "#faf9fb",
+        "tlbs-black": "#0A0A0A",
+        "tlbs-dark": "#111111",
+        "tlbs-card": "#161616",
+        "tlbs-border": "#222222",
+        "tlbs-gold": "#C8A24E",
+        "tlbs-gold-lt": "#DFC070",
+        "tlbs-gold-deep": "#A67C2E",
+        "tlbs-cream": "#F5EFE4",
+        "tlbs-cream-lt": "#FAF7F2",
       },
       fontFamily: {
-        "display": ["Inter", "sans-serif"],
-        "sans": ["Inter", "sans-serif"],
-        "serif": ["Playfair Display", "serif"],
+        display: ["Manrope", "system-ui", "sans-serif"],
+        sans: ["Manrope", "system-ui", "sans-serif"],
+        serif: ["Cormorant Garamond", "Georgia", "serif"],
+      },
+      fontSize: {
+        "tlbs-display": "clamp(2.4rem,4.5vw,3.8rem)",
+        "tlbs-section": "clamp(1.8rem,3vw,2.6rem)",
       },
       borderRadius: {
-        "DEFAULT": "0.25rem",
-        "lg": "0.5rem",
-        "xl": "0.75rem",
-        "full": "9999px"
+        tlbs: "2px",
       },
       boxShadow: {
-        "premium": "0 10px 40px -10px rgba(90, 45, 139, 0.1)",
-        "glow": "0 0 15px rgba(212, 175, 55, 0.3)",
-      }
+        "tlbs-glow": "0 0 60px rgba(200, 162, 78, 0.22)",
+      },
     },
   },
   plugins: [
