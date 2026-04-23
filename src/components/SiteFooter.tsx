@@ -16,19 +16,19 @@ const SiteFooter: React.FC = () => {
           <h4 className="text-[0.72rem] font-bold uppercase tracking-[0.14em] text-tlbs-gold-deep">Programs</h4>
           <ul className="mt-4 space-y-2 text-sm text-tlbs-cream/65">
             <li>
-              <Link to="/programs" className="hover:text-tlbs-gold">
+              <a href="https://course.businessanalysisschool.com/offers/G2dWJBCW" target="_blank" rel="noopener noreferrer" className="hover:text-tlbs-gold">
                 Thought Leader Foundation
-              </Link>
+              </a>
             </li>
             <li>
-              <Link to="/programs" className="hover:text-tlbs-gold">
+              <a href="https://course.businessanalysisschool.com/offers/kbwjeAHt" target="_blank" rel="noopener noreferrer" className="hover:text-tlbs-gold">
                 Authority Accelerator
-              </Link>
+              </a>
             </li>
             <li>
-              <Link to="/programs" className="hover:text-tlbs-gold">
+              <a href="https://course.businessanalysisschool.com/offers/HuG2vHLm" target="_blank" rel="noopener noreferrer" className="hover:text-tlbs-gold">
                 TLBS Mastermind
-              </Link>
+              </a>
             </li>
             <li>
               <Link to="/programs" className="hover:text-tlbs-gold">

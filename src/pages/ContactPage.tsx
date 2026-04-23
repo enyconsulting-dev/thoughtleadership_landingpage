@@ -1,13 +1,55 @@
-import React from 'react';
+import React, { useState } from 'react';
 import TlbsEyebrow from '../components/tlbs/TlbsEyebrow';
 import TlbsShell from '../components/tlbs/TlbsShell';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
+import { postToWebhook } from '../services/webhookService';
+
+const CONTACT_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/Qum6zwDsfvHsbXiehFQR/webhook-trigger/c5251ed6-c875-41ec-9fd7-b43bafffedca';
 
 const ContactPage: React.FC = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitMessage, setSubmitMessage] = useState('');
+
   useDocumentTitle(
     'Apply & Contact | Thought Leadership Business School',
     'Submit your application or reach the TLBS team. Advisory follow-up within 24 hours.'
   );
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitMessage('');
+
+    const formData = new FormData(e.currentTarget);
+    const data = {
+      fullName: formData.get('fullName') as string,
+      email: formData.get('email') as string,
+      phone: formData.get('phone') as string,
+      programOfInterest: formData.get('programOfInterest') as string,
+      goals: formData.get('goals') as string,
+      tag: 'Contact Form Submission',
+      source: 'Thought Leadership Business School',
+      type: 'contact',
+      timestamp: new Date().toISOString(),
+    };
+
+    try {
+      const result = await postToWebhook(CONTACT_WEBHOOK_URL, data);
+
+      if (result.success) {
+        setSubmitMessage('Thank you! Your application has been submitted. A member of our team will reach out within 24 hours.');
+        e.currentTarget.reset();
+      } else {
+        console.error('Webhook submission failed:', result.error);
+        setSubmitMessage('There was an error submitting your application. Please try again or contact us directly.');
+      }
+    } catch (error) {
+      console.error('Contact form submission error:', error);
+      setSubmitMessage('There was an error submitting your application. Please try again or contact us directly.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="border-t border-tlbs-border py-16 md:py-24">
@@ -24,37 +66,45 @@ const ContactPage: React.FC = () => {
             </p>
             <form
               className="mt-10 space-y-4"
-              onSubmit={(e) => {
-                e.preventDefault();
-              }}
+              onSubmit={handleSubmit}
             >
               <label className="block text-sm text-tlbs-cream/70">
                 Full name
                 <input
                   type="text"
+                  name="fullName"
                   required
-                  className="mt-2 w-full rounded-tlbs border border-tlbs-border bg-tlbs-card px-4 py-3 text-tlbs-cream focus:border-tlbs-gold focus:outline-none"
+                  disabled={isSubmitting}
+                  className="mt-2 w-full rounded-tlbs border border-tlbs-border bg-tlbs-card px-4 py-3 text-tlbs-cream focus:border-tlbs-gold focus:outline-none disabled:opacity-50"
                 />
               </label>
               <label className="block text-sm text-tlbs-cream/70">
                 Email
                 <input
                   type="email"
+                  name="email"
                   required
-                  className="mt-2 w-full rounded-tlbs border border-tlbs-border bg-tlbs-card px-4 py-3 text-tlbs-cream focus:border-tlbs-gold focus:outline-none"
+                  disabled={isSubmitting}
+                  className="mt-2 w-full rounded-tlbs border border-tlbs-border bg-tlbs-card px-4 py-3 text-tlbs-cream focus:border-tlbs-gold focus:outline-none disabled:opacity-50"
                 />
               </label>
               <label className="block text-sm text-tlbs-cream/70">
                 Phone
                 <input
                   type="tel"
+                  name="phone"
                   required
-                  className="mt-2 w-full rounded-tlbs border border-tlbs-border bg-tlbs-card px-4 py-3 text-tlbs-cream focus:border-tlbs-gold focus:outline-none"
+                  disabled={isSubmitting}
+                  className="mt-2 w-full rounded-tlbs border border-tlbs-border bg-tlbs-card px-4 py-3 text-tlbs-cream focus:border-tlbs-gold focus:outline-none disabled:opacity-50"
                 />
               </label>
               <label className="block text-sm text-tlbs-cream/70">
                 Program of interest
-                <select className="mt-2 w-full rounded-tlbs border border-tlbs-border bg-tlbs-card px-4 py-3 text-tlbs-cream focus:border-tlbs-gold focus:outline-none">
+                <select
+                  name="programOfInterest"
+                  disabled={isSubmitting}
+                  className="mt-2 w-full rounded-tlbs border border-tlbs-border bg-tlbs-card px-4 py-3 text-tlbs-cream focus:border-tlbs-gold focus:outline-none disabled:opacity-50"
+                >
                   <option value="">Select</option>
                   <option>Thought Leader Foundation</option>
                   <option>Authority Accelerator</option>
@@ -66,15 +116,25 @@ const ContactPage: React.FC = () => {
               <label className="block text-sm text-tlbs-cream/70">
                 Tell us about your goals
                 <textarea
+                  name="goals"
                   rows={5}
-                  className="mt-2 w-full rounded-tlbs border border-tlbs-border bg-tlbs-card px-4 py-3 text-tlbs-cream focus:border-tlbs-gold focus:outline-none"
+                  disabled={isSubmitting}
+                  className="mt-2 w-full rounded-tlbs border border-tlbs-border bg-tlbs-card px-4 py-3 text-tlbs-cream focus:border-tlbs-gold focus:outline-none disabled:opacity-50"
                 />
               </label>
+              {submitMessage && (
+                <div className={`rounded-tlbs p-4 ${submitMessage.includes('Thank you') ? 'bg-green-900/20 border border-green-700/50' : 'bg-red-900/20 border border-red-700/50'}`}>
+                  <p className={`text-sm ${submitMessage.includes('Thank you') ? 'text-green-300' : 'text-red-300'}`}>
+                    {submitMessage}
+                  </p>
+                </div>
+              )}
               <button
                 type="submit"
-                className="rounded-tlbs bg-tlbs-gold px-7 py-3.5 text-[0.78rem] font-bold uppercase tracking-[0.06em] text-tlbs-black hover:bg-tlbs-gold-lt"
+                disabled={isSubmitting}
+                className="rounded-tlbs bg-tlbs-gold px-7 py-3.5 text-[0.78rem] font-bold uppercase tracking-[0.06em] text-tlbs-black hover:bg-tlbs-gold-lt disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Submit Application
+                {isSubmitting ? 'Submitting...' : 'Submit Application'}
               </button>
             </form>
           </div>
