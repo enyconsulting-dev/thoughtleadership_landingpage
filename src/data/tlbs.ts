@@ -191,6 +191,7 @@ export type ResourceItem = {
   title: string;
   description: string;
   cta: string;
+  file?: string;
 };
 
 export const resources: ResourceItem[] = [
@@ -203,16 +204,19 @@ export const resources: ResourceItem[] = [
     title: 'The STORY Framework™ Quick-Start Guide (PDF)',
     description: 'Implementation overview of all 5 pillars.',
     cta: 'Download',
+    file: '/TLBS_STORY_Framework_Guide.pdf',
   },
   {
     title: 'Personal Brand Audit Worksheet (PDF)',
     description: 'Self-assessment of positioning, content, and monetization gaps.',
     cta: 'Download',
+    file: '/TLBS_Personal_Brand_Audit_Worksheet.pdf',
   },
   {
     title: 'Speaking Opportunity Tracker (Google Sheet template)',
     description: 'System for finding and pitching stages.',
     cta: 'Get template',
+    file: '/TLBS_Speaking_Opportunity_Tracker.pdf',
   },
   {
     title: 'From Expert to Authority eBook (PDF)',

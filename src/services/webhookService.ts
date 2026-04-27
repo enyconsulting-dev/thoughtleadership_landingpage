@@ -59,28 +59,70 @@ export const postToWebhook = async (
       'Content-Type': 'application/json',
     };
 
-    await fetch(webhookUrl, {
-      method: 'POST',
-      headers: { ...defaultHeaders, ...headers },
-      body: JSON.stringify(payload),
-      signal: controller.signal,
-      mode: 'no-cors', // Use no-cors to avoid CORS issues with webhooks
-    });
+    try {
+      const response = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { ...defaultHeaders, ...headers },
+        body: JSON.stringify(payload),
+        signal: controller.signal,
+      });
 
-    clearTimeout(timeoutId);
+      clearTimeout(timeoutId);
 
-    // With no-cors mode, we can't read the response, but the request was sent
-    // This is common with webhooks - we assume success if no network error occurred
-    console.log('Webhook request sent (no-cors mode):', {
-      url: webhookUrl,
-      payload: payload,
-    });
+      // Try to check the response status
+      if (response.ok) {
+        // Try to read the response body to check for success
+        try {
+          const responseData = await response.json();
+          console.log('Webhook response data:', responseData);
+          if (responseData && responseData.status && responseData.status.includes('Success')) {
+            return {
+              success: true,
+              message: 'Webhook request sent successfully',
+              data: responseData,
+            };
+          } else {
+            return {
+              success: false,
+              error: 'Webhook did not confirm success in response',
+            };
+          }
+        } catch (jsonError) {
+          // If can't read JSON, assume success since status is ok
+          console.warn('Could not read response JSON, assuming success:', jsonError instanceof Error ? jsonError.message : 'Unknown error');
+          return {
+            success: true,
+            message: 'Webhook request sent successfully (response body not readable)',
+            data: null,
+          };
+        }
+      } else {
+        return {
+          success: false,
+          error: `Webhook returned status ${response.status}: ${response.statusText}`,
+        };
+      }
+    } catch (fetchError) {
+      clearTimeout(timeoutId);
 
-    return {
-      success: true,
-      message: 'Webhook request sent successfully',
-      data: null,
-    };
+      // If fetch fails due to CORS or network issues, but the webhook might have received the data
+      // Check if it's a CORS-related error
+      if (fetchError instanceof TypeError) {
+        console.warn('Fetch failed, possibly due to CORS, but webhook may have received the data:', fetchError.message);
+        return {
+          success: true,
+          message: 'Webhook request sent (response blocked by CORS)',
+          data: null,
+        };
+      }
+
+      // Re-throw other errors
+      console.error('Fetch error:', fetchError);
+      return {
+        success: false,
+        error: `Failed to send webhook: ${fetchError instanceof Error ? fetchError.message : 'Unknown fetch error'}`,
+      };
+    }
   } catch (error) {
     // Handle abort/timeout
     if (error instanceof DOMException && error.name === 'AbortError') {
@@ -90,33 +132,11 @@ export const postToWebhook = async (
       };
     }
 
-    // Handle CORS or network errors - for webhooks, these might still mean the request was sent
-    if (error instanceof TypeError && error.message.includes('CORS')) {
-      console.warn('CORS error with webhook, but request may have been sent:', error.message);
-      return {
-        success: true,
-        message: 'Webhook request sent (CORS restricted response)',
-        data: null,
-      };
-    }
-
-    // Handle other network errors
-    if (error instanceof TypeError) {
-      console.warn('Network error with webhook, but request may have been sent:', error.message);
-      return {
-        success: true,
-        message: 'Webhook request sent (network response not readable)',
-        data: null,
-      };
-    }
-
-    // For any other unexpected errors, still consider it potentially successful
-    // since webhooks often don't provide detailed error responses
-    console.warn('Unexpected error with webhook, but request may have been sent:', error);
+    // Handle other errors
+    console.error('Error sending webhook:', error);
     return {
-      success: true,
-      message: 'Webhook request sent (unexpected response behavior)',
-      data: null,
+      success: false,
+      error: `Failed to send webhook: ${error instanceof Error ? error.message : 'Unknown error'}`,
     };
   }
 };

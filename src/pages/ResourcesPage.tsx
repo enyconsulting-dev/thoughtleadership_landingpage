@@ -42,6 +42,9 @@ const ResourcesPage: React.FC = () => {
         setDialogOpen(false);
         setIsSubmitting(false);
 
+        // Find the selected resource
+        const resource = resources.find(r => r.title === selectedResource);
+
         // Handle different resource types
         if (selectedResource.includes('Masterclass')) {
           // Redirect to free training page
@@ -49,8 +52,17 @@ const ResourcesPage: React.FC = () => {
         } else if (selectedResource.includes('Quiz')) {
           // For quiz, show success and mention email
           alert('Quiz access granted! Check your email for the assessment link.');
+        } else if (resource && resource.file) {
+          // For downloads, trigger automatic download
+          const link = document.createElement('a');
+          link.href = resource.file;
+          link.download = resource.file.split('/').pop() || 'download.pdf';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          alert('Resource downloaded successfully! Check your downloads folder.');
         } else {
-          // For downloads and templates, show success message
+          // For other resources, show success message
           alert('Resource access granted! Check your email for the download link.');
         }
       } else {

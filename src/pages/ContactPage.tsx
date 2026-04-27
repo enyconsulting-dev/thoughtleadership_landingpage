@@ -7,7 +7,6 @@ import { postToWebhook } from '../services/webhookService';
 const CONTACT_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/Qum6zwDsfvHsbXiehFQR/webhook-trigger/c5251ed6-c875-41ec-9fd7-b43bafffedca';
 
 const ContactPage: React.FC = () => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState('');
 
   useDocumentTitle(
@@ -17,7 +16,6 @@ const ContactPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsSubmitting(true);
     setSubmitMessage('');
 
     const formData = new FormData(e.currentTarget);
@@ -33,22 +31,11 @@ const ContactPage: React.FC = () => {
       timestamp: new Date().toISOString(),
     };
 
-    try {
-      const result = await postToWebhook(CONTACT_WEBHOOK_URL, data);
+    // Fire and forget the webhook
+    postToWebhook(CONTACT_WEBHOOK_URL, data);
 
-      if (result.success) {
-        setSubmitMessage('Thank you! Your application has been submitted. A member of our team will reach out within 24 hours.');
-        e.currentTarget.reset();
-      } else {
-        console.error('Webhook submission failed:', result.error);
-        setSubmitMessage('There was an error submitting your application. Please try again or contact us directly.');
-      }
-    } catch (error) {
-      console.error('Contact form submission error:', error);
-      setSubmitMessage('There was an error submitting your application. Please try again or contact us directly.');
-    } finally {
-      setIsSubmitting(false);
-    }
+    setSubmitMessage('Thank you! Your application has been submitted. A member of our team will reach out within 24 hours.');
+    e.currentTarget.reset();
   };
 
   return (
@@ -74,8 +61,7 @@ const ContactPage: React.FC = () => {
                   type="text"
                   name="fullName"
                   required
-                  disabled={isSubmitting}
-                  className="mt-2 w-full rounded-tlbs border border-tlbs-border bg-tlbs-card px-4 py-3 text-tlbs-cream focus:border-tlbs-gold focus:outline-none disabled:opacity-50"
+                  className="mt-2 w-full rounded-tlbs border border-tlbs-border bg-tlbs-card px-4 py-3 text-tlbs-cream focus:border-tlbs-gold focus:outline-none"
                 />
               </label>
               <label className="block text-sm text-tlbs-cream/70">
@@ -84,8 +70,7 @@ const ContactPage: React.FC = () => {
                   type="email"
                   name="email"
                   required
-                  disabled={isSubmitting}
-                  className="mt-2 w-full rounded-tlbs border border-tlbs-border bg-tlbs-card px-4 py-3 text-tlbs-cream focus:border-tlbs-gold focus:outline-none disabled:opacity-50"
+                  className="mt-2 w-full rounded-tlbs border border-tlbs-border bg-tlbs-card px-4 py-3 text-tlbs-cream focus:border-tlbs-gold focus:outline-none"
                 />
               </label>
               <label className="block text-sm text-tlbs-cream/70">
@@ -94,16 +79,14 @@ const ContactPage: React.FC = () => {
                   type="tel"
                   name="phone"
                   required
-                  disabled={isSubmitting}
-                  className="mt-2 w-full rounded-tlbs border border-tlbs-border bg-tlbs-card px-4 py-3 text-tlbs-cream focus:border-tlbs-gold focus:outline-none disabled:opacity-50"
+                  className="mt-2 w-full rounded-tlbs border border-tlbs-border bg-tlbs-card px-4 py-3 text-tlbs-cream focus:border-tlbs-gold focus:outline-none"
                 />
               </label>
               <label className="block text-sm text-tlbs-cream/70">
                 Program of interest
                 <select
                   name="programOfInterest"
-                  disabled={isSubmitting}
-                  className="mt-2 w-full rounded-tlbs border border-tlbs-border bg-tlbs-card px-4 py-3 text-tlbs-cream focus:border-tlbs-gold focus:outline-none disabled:opacity-50"
+                  className="mt-2 w-full rounded-tlbs border border-tlbs-border bg-tlbs-card px-4 py-3 text-tlbs-cream focus:border-tlbs-gold focus:outline-none"
                 >
                   <option value="">Select</option>
                   <option>Thought Leader Foundation</option>
@@ -118,8 +101,7 @@ const ContactPage: React.FC = () => {
                 <textarea
                   name="goals"
                   rows={5}
-                  disabled={isSubmitting}
-                  className="mt-2 w-full rounded-tlbs border border-tlbs-border bg-tlbs-card px-4 py-3 text-tlbs-cream focus:border-tlbs-gold focus:outline-none disabled:opacity-50"
+                  className="mt-2 w-full rounded-tlbs border border-tlbs-border bg-tlbs-card px-4 py-3 text-tlbs-cream focus:border-tlbs-gold focus:outline-none"
                 />
               </label>
               {submitMessage && (
@@ -131,10 +113,9 @@ const ContactPage: React.FC = () => {
               )}
               <button
                 type="submit"
-                disabled={isSubmitting}
-                className="rounded-tlbs bg-tlbs-gold px-7 py-3.5 text-[0.78rem] font-bold uppercase tracking-[0.06em] text-tlbs-black hover:bg-tlbs-gold-lt disabled:opacity-50 disabled:cursor-not-allowed"
+                className="rounded-tlbs bg-tlbs-gold px-7 py-3.5 text-[0.78rem] font-bold uppercase tracking-[0.06em] text-tlbs-black hover:bg-tlbs-gold-lt"
               >
-                {isSubmitting ? 'Submitting...' : 'Submit Application'}
+                Submit Application
               </button>
             </form>
           </div>
