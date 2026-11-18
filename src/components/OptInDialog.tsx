@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
+import TurnstileWidget, { type TurnstileWidgetHandle } from './TurnstileWidget';
 
 export interface OptInFormData {
   fullName: string;
   email: string;
   mobileNumber: string;
+  turnstileToken: string;
 }
 
 export interface OptInDialogProps {
@@ -25,6 +27,8 @@ const OptInDialog: React.FC<OptInDialogProps> = ({
   const [email, setEmail] = useState('');
   const [mobileNumber, setMobileNumber] = useState('');
   const [error, setError] = useState('');
+  const [turnstileToken, setTurnstileToken] = useState('');
+  const turnstileRef = useRef<TurnstileWidgetHandle>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,12 +54,17 @@ const OptInDialog: React.FC<OptInDialogProps> = ({
       setError('Please enter a valid email address');
       return;
     }
+    if (!turnstileToken) {
+      setError('Complete the security check before continuing.');
+      return;
+    }
 
     try {
       await onSubmit({
         fullName: fullName.trim(),
         email: email.trim(),
         mobileNumber: mobileNumber.trim(),
+        turnstileToken,
       });
 
       // Reset form on success
@@ -64,6 +73,9 @@ const OptInDialog: React.FC<OptInDialogProps> = ({
       setMobileNumber('');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred. Please try again.');
+    } finally {
+      turnstileRef.current?.reset();
+      setTurnstileToken('');
     }
   };
 
@@ -72,7 +84,9 @@ const OptInDialog: React.FC<OptInDialogProps> = ({
     setFullName('');
     setEmail('');
     setMobileNumber('');
+    setTurnstileToken('');
     setError('');
+    turnstileRef.current?.reset();
     onClose();
   };
 
@@ -158,6 +172,8 @@ const OptInDialog: React.FC<OptInDialogProps> = ({
             />
           </div>
 
+          <TurnstileWidget ref={turnstileRef} onToken={setTurnstileToken} />
+
           {/* Error Message */}
           {error && (
             <div className="rounded-tlbs bg-red-900/20 border border-red-700/50 p-3">
@@ -168,7 +184,7 @@ const OptInDialog: React.FC<OptInDialogProps> = ({
           {/* Submit Button */}
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={isLoading || !turnstileToken}
             className="w-full rounded-tlbs bg-tlbs-gold py-3.5 text-[0.78rem] font-bold uppercase tracking-[0.06em] text-tlbs-black hover:bg-tlbs-gold-lt disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {isLoading ? 'Processing...' : 'Continue to Enrollment'}
