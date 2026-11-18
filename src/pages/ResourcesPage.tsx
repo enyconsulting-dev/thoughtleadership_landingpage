@@ -4,9 +4,7 @@ import TlbsShell from '../components/tlbs/TlbsShell';
 import OptInDialog, { type OptInFormData } from '../components/OptInDialog';
 import { resources } from '../data/tlbs';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
-import { postToWebhook } from '../services/webhookService';
-
-const RESOURCE_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/Qum6zwDsfvHsbXiehFQR/webhook-trigger/c5251ed6-c875-41ec-9fd7-b43bafffedca';
+import { submitLead } from '../services/webhookService';
 
 const ResourcesPage: React.FC = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -27,15 +25,13 @@ const ResourcesPage: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      const result = await postToWebhook(RESOURCE_WEBHOOK_URL, {
+      const result = await submitLead({
+        formType: 'resource',
         fullName: formData.fullName,
         email: formData.email,
         mobileNumber: formData.mobileNumber,
         tag: selectedResource,
-        source: 'Thought Leadership Business School',
-        type: 'resource',
-        timestamp: new Date().toISOString(),
-      });
+      }, formData.turnstileToken);
 
       if (result.success) {
         // Close dialog and handle resource access
