@@ -7,6 +7,12 @@
 
 The requested source-code and deployment-configuration review could not be completed: the delegated security-review service failed before starting because of a DNS/network error. This report therefore records dependency advisories only. It does not assert that application-code flows, hosting headers, webhook behavior, or deployment settings were reviewed.
 
+## Remediation follow-up
+
+The dependency findings below are the initial audit baseline. On 2026-11-18, compatible dependency updates were applied without `npm audit fix --force`; Vite and React Router were explicitly upgraded to patched releases. Current `npm audit` and `npm audit --omit=dev` both report zero vulnerabilities.
+
+The updated app passes `npm run build` (TypeScript checks and production bundle). A browser smoke test also rendered the `/about` route with no page or console errors. `npm run lint` could not run because `eslint.config.js` imports `eslint-plugin-react-hooks`, which is not declared or installed in this project.
+
 ## Audit results
 
 `npm audit` reported 20 vulnerable package entries in the complete dependency tree: 11 high, 8 moderate, and 1 low. `npm audit --omit=dev` reported 8 entries in the production dependency tree: 4 high and 4 moderate. Multiple advisories for the same package are grouped below. Presence in the dependency tree is confirmed; exploitability depends on whether vulnerable package behavior is reachable with attacker-controlled input and, for development tools, whether the affected tool is exposed.
