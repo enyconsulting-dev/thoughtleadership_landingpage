@@ -2,9 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { Program } from '../../data/tlbs';
 import OptInDialog, { type OptInFormData } from '../OptInDialog';
-import { postToWebhook } from '../../services/webhookService';
-
-const OPT_IN_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/Qum6zwDsfvHsbXiehFQR/webhook-trigger/c5251ed6-c875-41ec-9fd7-b43bafffedca';
+import { submitLead } from '../../services/webhookService';
 
 interface ProgramCardProps {
   program: Program;
@@ -22,16 +20,14 @@ const ProgramCard: React.FC<ProgramCardProps> = ({ program }) => {
     setIsSubmitting(true);
 
     try {
-      const result = await postToWebhook(OPT_IN_WEBHOOK_URL, {
+      const result = await submitLead({
+        formType: 'program',
         fullName: formData.fullName,
         email: formData.email,
         mobileNumber: formData.mobileNumber,
         tag: program.title,
-        source: 'Thought Leadership Business School',
-        type: 'program',
         programId: program.id,
-        timestamp: new Date().toISOString(),
-      });
+      }, formData.turnstileToken);
 
       if (!result.success) {
         throw new Error(result.error || 'Failed to submit opt-in information');
