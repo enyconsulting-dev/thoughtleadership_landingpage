@@ -3,12 +3,10 @@ import TlbsEyebrow from '../components/tlbs/TlbsEyebrow';
 import TlbsShell from '../components/tlbs/TlbsShell';
 import TlbsButton from '../components/tlbs/TlbsButton';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
+import { pageSeo } from '../data/seo';
 
 const AboutPage: React.FC = () => {
-  useDocumentTitle(
-    'About Thought Leadership Business School | TLBS',
-    'The apex tier of the ENY education ecosystem — built for six-figure professionals scaling to seven-figure authority.'
-  );
+  useDocumentTitle(pageSeo['/about'].title, pageSeo['/about'].description);
 
   return (
     <div className="border-t border-tlbs-border py-16 md:py-24">
