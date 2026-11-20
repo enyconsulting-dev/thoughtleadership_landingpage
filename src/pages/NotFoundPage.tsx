@@ -4,7 +4,7 @@ import TlbsShell from '../components/tlbs/TlbsShell';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 const NotFoundPage: React.FC = () => {
-  useDocumentTitle('Page not found | TLBS');
+  useDocumentTitle('Page not found | TLBS', 'The requested page could not be found.', { noindex: true });
 
   return (
     <div className="border-t border-tlbs-border py-24 md:py-32">

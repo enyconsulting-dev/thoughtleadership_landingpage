@@ -25,10 +25,10 @@ const LiveTeaserSection: React.FC = () => {
         </div>
         <div className="mt-10 space-y-3 text-sm text-tlbs-cream/70">
           <p>
-            <span className="text-tlbs-gold">Past events:</span> Calgary, Canada.
+            <span className="text-tlbs-gold">Past event:</span> Calgary, Canada.
           </p>
           <p>
-            <span className="text-tlbs-gold">Upcoming:</span> Lagos • Atlanta • London
+            Dates and locations for the next event will be announced when confirmed.
           </p>
           <p className="pt-2 text-tlbs-cream/55">Limited seats. Premium venues only. Application required.</p>
         </div>

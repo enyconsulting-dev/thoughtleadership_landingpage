@@ -1,15 +1,72 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
 import TlbsEyebrow from '../components/tlbs/TlbsEyebrow';
 import TlbsShell from '../components/tlbs/TlbsShell';
+import OptInDialog, { type OptInFormData } from '../components/OptInDialog';
 import { resources } from '../data/tlbs';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
+import { submitLead } from '../services/webhookService';
+import { pageSeo } from '../data/seo';
 
 const ResourcesPage: React.FC = () => {
-  useDocumentTitle(
-    'Resources | TLBS',
-    'Framework guides, audits, tools, and assessments to build seven-figure authority.'
-  );
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedResource, setSelectedResource] = useState<string>('');
+
+  useDocumentTitle(pageSeo['/resources'].title, pageSeo['/resources'].description);
+
+  const handleResourceClick = (resourceTitle: string) => {
+    setSelectedResource(resourceTitle);
+    setDialogOpen(true);
+  };
+
+  const handleOptInSubmit = async (formData: OptInFormData) => {
+    setIsSubmitting(true);
+
+    try {
+      const result = await submitLead({
+        formType: 'resource',
+        fullName: formData.fullName,
+        email: formData.email,
+        mobileNumber: formData.mobileNumber,
+        tag: selectedResource,
+      }, formData.turnstileToken);
+
+      if (result.success) {
+        // Close dialog and handle resource access
+        setDialogOpen(false);
+        setIsSubmitting(false);
+
+        // Find the selected resource
+        const resource = resources.find(r => r.title === selectedResource);
+
+        // Handle different resource types
+        if (selectedResource.includes('Masterclass')) {
+          // Redirect to free training page
+          window.location.href = '/free-training';
+        } else if (selectedResource.includes('Quiz')) {
+          // For quiz, show success and mention email
+          alert('Quiz access granted! Check your email for the assessment link.');
+        } else if (resource && resource.file) {
+          // For downloads, trigger automatic download
+          const link = document.createElement('a');
+          link.href = resource.file;
+          link.download = resource.file.split('/').pop() || 'download.pdf';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          alert('Resource downloaded successfully! Check your downloads folder.');
+        } else {
+          // For other resources, show success message
+          alert('Resource access granted! Check your email for the download link.');
+        }
+      } else {
+        throw new Error(result.error || 'Failed to process your request');
+      }
+    } catch (error) {
+      setIsSubmitting(false);
+      throw error;
+    }
+  };
 
   return (
     <div className="border-t border-tlbs-border py-16 md:py-24">
@@ -33,15 +90,17 @@ const ResourcesPage: React.FC = () => {
                 {r.description}
               </p>
               {r.title.includes('Masterclass') ? (
-                <Link
-                  to="/free-training"
+                <button
+                  type="button"
+                  onClick={() => handleResourceClick(r.title)}
                   className="mt-8 inline-flex w-fit rounded-tlbs border-2 border-tlbs-gold px-5 py-2.5 text-[0.72rem] font-bold uppercase tracking-[0.06em] text-tlbs-gold hover:bg-tlbs-gold/10"
                 >
                   {r.cta}
-                </Link>
+                </button>
               ) : (
                 <button
                   type="button"
+                  onClick={() => handleResourceClick(r.title)}
                   className="mt-8 w-fit rounded-tlbs bg-tlbs-gold px-5 py-2.5 text-left text-[0.72rem] font-bold uppercase tracking-[0.06em] text-tlbs-black hover:bg-tlbs-gold-lt"
                 >
                   {r.cta}
@@ -53,6 +112,14 @@ const ResourcesPage: React.FC = () => {
             </div>
           ))}
         </div>
+
+        <OptInDialog
+          isOpen={dialogOpen}
+          programName={selectedResource}
+          onClose={() => setDialogOpen(false)}
+          onSubmit={handleOptInSubmit}
+          isLoading={isSubmitting}
+        />
       </TlbsShell>
     </div>
   );

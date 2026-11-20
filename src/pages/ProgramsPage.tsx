@@ -4,12 +4,10 @@ import TlbsShell from '../components/tlbs/TlbsShell';
 import ProgramCard from '../components/tlbs/ProgramCard';
 import { programs } from '../data/tlbs';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
+import { pageSeo } from '../data/seo';
 
 const ProgramsPage: React.FC = () => {
-  useDocumentTitle(
-    'Programs | Foundation, Accelerator, Mastermind, Private Advisory | TLBS',
-    'Four tracks from $14,997 to $100K/year. Speaking, media, book publishing, board positioning.'
-  );
+  useDocumentTitle(pageSeo['/programs'].title, pageSeo['/programs'].description);
 
   return (
     <div className="border-t border-tlbs-border py-16 md:py-24">

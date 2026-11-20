@@ -22,3 +22,25 @@
       'opsz' 24;
   }
 }
+
+@keyframes awards-slide {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.award-slider-track {
+  animation: awards-slide 70s linear infinite;
+}
+
+.award-slider[data-paused='true'] .award-slider-track,
+.award-slider:hover .award-slider-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .award-slider-track {
+    animation: none;
+    transform: none;
+  }
+}

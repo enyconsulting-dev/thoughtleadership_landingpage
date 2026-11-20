@@ -1,0 +1,12 @@
+{
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/free-training", "destination": "/free-training/index.html" },
+    { "source": "/programs", "destination": "/programs/index.html" },
+    { "source": "/live", "destination": "/live/index.html" },
+    { "source": "/resources", "destination": "/resources/index.html" },
+    { "source": "/about", "destination": "/about/index.html" },
+    { "source": "/success-stories", "destination": "/success-stories/index.html" },
+    { "source": "/contact", "destination": "/contact/index.html" }
+  ]
+}
