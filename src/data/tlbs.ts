@@ -11,6 +11,7 @@ export type Program = {
   graduation?: string;
   cta: string;
   ctaNote?: string;
+  link?: string;
 };
 
 export const programs: Program[] = [
@@ -20,6 +21,7 @@ export const programs: Program[] = [
     title: 'Thought Leader Foundation',
     pricing: '$14,997 (or 6 payments of $2,750)',
     spots: '20 per cohort',
+    link: 'https://course.businessanalysisschool.com/offers/G2dWJBCW',
     items: [
       'The complete STORY Framework™ implementation — all 5 pillars with workbooks, templates, and live coaching',
       'Personal brand strategy and Unique Value Proposition development',
@@ -41,6 +43,7 @@ export const programs: Program[] = [
     pricing: '$29,997 (or 12 payments of $2,750)',
     spots: '10 per cohort',
     featured: true,
+    link: 'https://course.businessanalysisschool.com/offers/kbwjeAHt',
     includesPrefix: 'Everything in Thought Leader PLUS:',
     items: [
       'Speaking opportunities curation and active placement — we help you land stages',
@@ -61,6 +64,7 @@ export const programs: Program[] = [
     title: 'TLBS Mastermind',
     pricing: '$2,997/month (quarterly retreats included)',
     spots: 'Requires Authority Accelerator graduation',
+    link: 'https://course.businessanalysisschool.com/offers/HuG2vHLm',
     items: [
       'Monthly strategy calls with Eno and mastermind peers — deal review, brand audits, opportunity sharing',
       'Quarterly in-person retreats at premium venues — 2-day intensive strategy sessions',
@@ -187,6 +191,7 @@ export type ResourceItem = {
   title: string;
   description: string;
   cta: string;
+  file?: string;
 };
 
 export const resources: ResourceItem[] = [
@@ -199,16 +204,19 @@ export const resources: ResourceItem[] = [
     title: 'The STORY Framework™ Quick-Start Guide (PDF)',
     description: 'Implementation overview of all 5 pillars.',
     cta: 'Download',
+    file: '/TLBS_STORY_Framework_Guide.pdf',
   },
   {
     title: 'Personal Brand Audit Worksheet (PDF)',
     description: 'Self-assessment of positioning, content, and monetization gaps.',
     cta: 'Download',
+    file: '/TLBS_Personal_Brand_Audit_Worksheet.pdf',
   },
   {
     title: 'Speaking Opportunity Tracker (Google Sheet template)',
     description: 'System for finding and pitching stages.',
     cta: 'Get template',
+    file: '/TLBS_Speaking_Opportunity_Tracker.pdf',
   },
   {
     title: 'From Expert to Authority eBook (PDF)',

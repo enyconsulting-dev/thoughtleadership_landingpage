@@ -2,12 +2,10 @@ import React from 'react';
 import TlbsEyebrow from '../components/tlbs/TlbsEyebrow';
 import TlbsShell from '../components/tlbs/TlbsShell';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
+import { pageSeo } from '../data/seo';
 
 const LivePage: React.FC = () => {
-  useDocumentTitle(
-    'TLBS Live | 2-Day Thought Leadership Immersive Experience',
-    'Premium in-person event. Calgary, Lagos, Atlanta, London. Limited seats. Apply for tickets.'
-  );
+  useDocumentTitle(pageSeo['/live'].title, pageSeo['/live'].description);
 
   return (
     <div className="border-t border-tlbs-border py-16 md:py-24">
@@ -29,10 +27,10 @@ const LivePage: React.FC = () => {
         </div>
         <div className="mt-10 space-y-2 text-sm text-tlbs-cream/65">
           <p>
-            <span className="text-tlbs-gold">Past:</span> Calgary, Canada
+            <span className="text-tlbs-gold">Past event:</span> Calgary, Canada
           </p>
           <p>
-            <span className="text-tlbs-gold">Upcoming:</span> Lagos • Atlanta • London
+            Dates and locations for the next event will be announced when confirmed. Join the waitlist for updates.
           </p>
         </div>
 

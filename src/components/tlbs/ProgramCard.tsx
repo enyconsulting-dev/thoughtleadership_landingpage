@@ -1,11 +1,58 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { Program } from '../../data/tlbs';
+import OptInDialog, { type OptInFormData } from '../OptInDialog';
+import { submitLead } from '../../services/webhookService';
 
-const ProgramCard: React.FC<{ program: Program }> = ({ program }) => {
+interface ProgramCardProps {
+  program: Program;
+}
+
+const ProgramCard: React.FC<ProgramCardProps> = ({ program }) => {
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const shell = program.featured
     ? 'border-2 border-tlbs-gold bg-tlbs-card shadow-tlbs-glow'
     : 'border border-tlbs-border bg-tlbs-card';
+
+  const handleOptInSubmit = async (formData: OptInFormData) => {
+    setIsSubmitting(true);
+
+    try {
+      const result = await submitLead({
+        formType: 'program',
+        fullName: formData.fullName,
+        email: formData.email,
+        mobileNumber: formData.mobileNumber,
+        tag: program.title,
+        programId: program.id,
+      }, formData.turnstileToken);
+
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to submit opt-in information');
+      }
+
+      // Close dialog and redirect to enrollment link
+      setDialogOpen(false);
+      setIsSubmitting(false);
+
+      if (program.link) {
+        window.open(program.link, '_blank', 'noopener,noreferrer');
+      }
+    } catch (error) {
+      setIsSubmitting(false);
+      throw error;
+    }
+  };
+
+  const handleCTAClick = (e: React.MouseEvent) => {
+    // If there's an external link and it's for one of the three programs requiring opt-in
+    if (program.link && ['foundation', 'accelerator', 'mastermind'].includes(program.id)) {
+      e.preventDefault();
+      setDialogOpen(true);
+    }
+  };
 
   return (
     <article className={`rounded-tlbs p-8 md:p-10 ${shell}`}>
@@ -42,12 +89,43 @@ const ProgramCard: React.FC<{ program: Program }> = ({ program }) => {
       )}
 
       <div className="mt-10">
-        <Link
-          to="/contact"
-          className="inline-flex items-center justify-center rounded-tlbs bg-tlbs-gold px-7 py-3.5 text-[0.78rem] font-bold uppercase tracking-[0.06em] text-tlbs-black transition-colors hover:bg-tlbs-gold-lt"
-        >
-          {program.cta}
-        </Link>
+        {program.link && ['foundation', 'accelerator', 'mastermind'].includes(program.id) ? (
+          // For programs with enrollment links, show button that opens dialog
+          <>
+            <button
+              type="button"
+              onClick={handleCTAClick}
+              className="inline-flex items-center justify-center rounded-tlbs bg-tlbs-gold px-7 py-3.5 text-[0.78rem] font-bold uppercase tracking-[0.06em] text-tlbs-black transition-colors hover:bg-tlbs-gold-lt disabled:opacity-50"
+            >
+              {program.cta}
+            </button>
+            <OptInDialog
+              isOpen={dialogOpen}
+              programName={program.title}
+              onClose={() => setDialogOpen(false)}
+              onSubmit={handleOptInSubmit}
+              isLoading={isSubmitting}
+            />
+          </>
+        ) : program.link ? (
+          // For Private Advisory or other external links
+          <a
+            href={program.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center rounded-tlbs bg-tlbs-gold px-7 py-3.5 text-[0.78rem] font-bold uppercase tracking-[0.06em] text-tlbs-black transition-colors hover:bg-tlbs-gold-lt"
+          >
+            {program.cta}
+          </a>
+        ) : (
+          // For programs without links (standard contact form)
+          <Link
+            to="/contact"
+            className="inline-flex items-center justify-center rounded-tlbs bg-tlbs-gold px-7 py-3.5 text-[0.78rem] font-bold uppercase tracking-[0.06em] text-tlbs-black transition-colors hover:bg-tlbs-gold-lt"
+          >
+            {program.cta}
+          </Link>
+        )}
         {program.ctaNote && (
           <p className="mt-3 text-xs text-tlbs-cream/50">{program.ctaNote}</p>
         )}

@@ -1,13 +1,57 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import TlbsEyebrow from '../components/tlbs/TlbsEyebrow';
 import TlbsShell from '../components/tlbs/TlbsShell';
+import TurnstileWidget, { type TurnstileWidgetHandle } from '../components/TurnstileWidget';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
+import { submitLead } from '../services/webhookService';
+import { pageSeo } from '../data/seo';
+import { contactInfo } from '../data/contact';
 
 const ContactPage: React.FC = () => {
-  useDocumentTitle(
-    'Apply & Contact | Thought Leadership Business School',
-    'Submit your application or reach the TLBS team. Advisory follow-up within 24 hours.'
-  );
+  const [submitMessage, setSubmitMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState('');
+  const turnstileRef = useRef<TurnstileWidgetHandle>(null);
+
+  useDocumentTitle(pageSeo['/contact'].title, pageSeo['/contact'].description);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSubmitMessage('');
+
+    if (!turnstileToken) {
+      setSubmitMessage('Complete the security check before submitting.');
+      return;
+    }
+
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    const data = {
+      formType: 'contact' as const,
+      fullName: formData.get('fullName') as string,
+      email: formData.get('email') as string,
+      phone: formData.get('phone') as string,
+      programOfInterest: formData.get('programOfInterest') as string,
+      goals: formData.get('goals') as string,
+    };
+
+    setIsSubmitting(true);
+    try {
+      const result = await submitLead(data, turnstileToken);
+      if (!result.success) {
+        throw new Error(result.error || 'Could not submit your application. Please try again.');
+      }
+
+      setSubmitMessage('Thank you! Your application has been submitted. A member of our team will reach out within 24 hours.');
+      form.reset();
+    } catch (error) {
+      setSubmitMessage(error instanceof Error ? error.message : 'Could not submit your application. Please try again.');
+    } finally {
+      turnstileRef.current?.reset();
+      setTurnstileToken('');
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="border-t border-tlbs-border py-16 md:py-24">
@@ -24,14 +68,13 @@ const ContactPage: React.FC = () => {
             </p>
             <form
               className="mt-10 space-y-4"
-              onSubmit={(e) => {
-                e.preventDefault();
-              }}
+              onSubmit={handleSubmit}
             >
               <label className="block text-sm text-tlbs-cream/70">
                 Full name
                 <input
                   type="text"
+                  name="fullName"
                   required
                   className="mt-2 w-full rounded-tlbs border border-tlbs-border bg-tlbs-card px-4 py-3 text-tlbs-cream focus:border-tlbs-gold focus:outline-none"
                 />
@@ -40,6 +83,7 @@ const ContactPage: React.FC = () => {
                 Email
                 <input
                   type="email"
+                  name="email"
                   required
                   className="mt-2 w-full rounded-tlbs border border-tlbs-border bg-tlbs-card px-4 py-3 text-tlbs-cream focus:border-tlbs-gold focus:outline-none"
                 />
@@ -48,13 +92,17 @@ const ContactPage: React.FC = () => {
                 Phone
                 <input
                   type="tel"
+                  name="phone"
                   required
                   className="mt-2 w-full rounded-tlbs border border-tlbs-border bg-tlbs-card px-4 py-3 text-tlbs-cream focus:border-tlbs-gold focus:outline-none"
                 />
               </label>
               <label className="block text-sm text-tlbs-cream/70">
                 Program of interest
-                <select className="mt-2 w-full rounded-tlbs border border-tlbs-border bg-tlbs-card px-4 py-3 text-tlbs-cream focus:border-tlbs-gold focus:outline-none">
+                <select
+                  name="programOfInterest"
+                  className="mt-2 w-full rounded-tlbs border border-tlbs-border bg-tlbs-card px-4 py-3 text-tlbs-cream focus:border-tlbs-gold focus:outline-none"
+                >
                   <option value="">Select</option>
                   <option>Thought Leader Foundation</option>
                   <option>Authority Accelerator</option>
@@ -66,15 +114,25 @@ const ContactPage: React.FC = () => {
               <label className="block text-sm text-tlbs-cream/70">
                 Tell us about your goals
                 <textarea
+                  name="goals"
                   rows={5}
                   className="mt-2 w-full rounded-tlbs border border-tlbs-border bg-tlbs-card px-4 py-3 text-tlbs-cream focus:border-tlbs-gold focus:outline-none"
                 />
               </label>
+              <TurnstileWidget ref={turnstileRef} onToken={setTurnstileToken} />
+              {submitMessage && (
+                <div className={`rounded-tlbs p-4 ${submitMessage.includes('Thank you') ? 'bg-green-900/20 border border-green-700/50' : 'bg-red-900/20 border border-red-700/50'}`}>
+                  <p className={`text-sm ${submitMessage.includes('Thank you') ? 'text-green-300' : 'text-red-300'}`}>
+                    {submitMessage}
+                  </p>
+                </div>
+              )}
               <button
                 type="submit"
-                className="rounded-tlbs bg-tlbs-gold px-7 py-3.5 text-[0.78rem] font-bold uppercase tracking-[0.06em] text-tlbs-black hover:bg-tlbs-gold-lt"
+                disabled={isSubmitting || !turnstileToken}
+                className="rounded-tlbs bg-tlbs-gold px-7 py-3.5 text-[0.78rem] font-bold uppercase tracking-[0.06em] text-tlbs-black hover:bg-tlbs-gold-lt disabled:cursor-not-allowed disabled:opacity-50"
               >
-                Submit Application
+                {isSubmitting ? 'Submitting...' : 'Submit Application'}
               </button>
             </form>
           </div>
@@ -84,18 +142,18 @@ const ContactPage: React.FC = () => {
             <h2 className="font-serif text-2xl font-normal text-tlbs-cream">Reach the team</h2>
             <ul className="mt-8 space-y-4 font-light text-[0.94rem] text-tlbs-cream/80">
               <li>
-                <a href="mailto:hello@thoughtleadershipbusinessschool.com" className="text-tlbs-gold hover:text-tlbs-gold-lt">
-                  hello@thoughtleadershipbusinessschool.com
+                <a href={`mailto:${contactInfo.email}`} className="text-tlbs-gold hover:text-tlbs-gold-lt">
+                  {contactInfo.email}
                 </a>
               </li>
               <li>
-                <a href="tel:+15873288469" className="hover:text-tlbs-cream">
-                  +1-587-328-8469
+                <a href={`mailto:${contactInfo.supportEmail}`} className="hover:text-tlbs-cream">
+                  {contactInfo.supportEmail}
                 </a>
               </li>
               <li>
-                <a href="tel:+2349085515969" className="hover:text-tlbs-cream">
-                  +234-908-551-5969
+                <a href={`tel:${contactInfo.phone}`} className="hover:text-tlbs-cream">
+                  {contactInfo.phone}
                 </a>
               </li>
             </ul>
