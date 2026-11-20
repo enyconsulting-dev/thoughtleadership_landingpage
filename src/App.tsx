@@ -10,22 +10,28 @@ import SuccessStoriesPage from './pages/SuccessStoriesPage';
 import ContactPage from './pages/ContactPage';
 import NotFoundPage from './pages/NotFoundPage';
 
+export function AppRoutes() {
+  return (
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route index element={<HomePage />} />
+        <Route path="free-training" element={<FreeTrainingPage />} />
+        <Route path="programs" element={<ProgramsPage />} />
+        <Route path="live" element={<LivePage />} />
+        <Route path="resources" element={<ResourcesPage />} />
+        <Route path="about" element={<AboutPage />} />
+        <Route path="success-stories" element={<SuccessStoriesPage />} />
+        <Route path="contact" element={<ContactPage />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Route>
+    </Routes>
+  );
+}
+
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<HomePage />} />
-          <Route path="free-training" element={<FreeTrainingPage />} />
-          <Route path="programs" element={<ProgramsPage />} />
-          <Route path="live" element={<LivePage />} />
-          <Route path="resources" element={<ResourcesPage />} />
-          <Route path="about" element={<AboutPage />} />
-          <Route path="success-stories" element={<SuccessStoriesPage />} />
-          <Route path="contact" element={<ContactPage />} />
-          <Route path="*" element={<NotFoundPage />} />
-        </Route>
-      </Routes>
+      <AppRoutes />
     </Router>
   );
 }

@@ -4,6 +4,8 @@ import TlbsShell from '../components/tlbs/TlbsShell';
 import TurnstileWidget, { type TurnstileWidgetHandle } from '../components/TurnstileWidget';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import { submitLead } from '../services/webhookService';
+import { pageSeo } from '../data/seo';
+import { contactInfo } from '../data/contact';
 
 const ContactPage: React.FC = () => {
   const [submitMessage, setSubmitMessage] = useState('');
@@ -11,10 +13,7 @@ const ContactPage: React.FC = () => {
   const [turnstileToken, setTurnstileToken] = useState('');
   const turnstileRef = useRef<TurnstileWidgetHandle>(null);
 
-  useDocumentTitle(
-    'Apply & Contact | Thought Leadership Business School',
-    'Submit your application or reach the TLBS team. Advisory follow-up within 24 hours.'
-  );
+  useDocumentTitle(pageSeo['/contact'].title, pageSeo['/contact'].description);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -143,18 +142,18 @@ const ContactPage: React.FC = () => {
             <h2 className="font-serif text-2xl font-normal text-tlbs-cream">Reach the team</h2>
             <ul className="mt-8 space-y-4 font-light text-[0.94rem] text-tlbs-cream/80">
               <li>
-                <a href="mailto:hello@thoughtleadershipbusinessschool.com" className="text-tlbs-gold hover:text-tlbs-gold-lt">
-                  hello@thoughtleadershipbusinessschool.com
+                <a href={`mailto:${contactInfo.email}`} className="text-tlbs-gold hover:text-tlbs-gold-lt">
+                  {contactInfo.email}
                 </a>
               </li>
               <li>
-                <a href="tel:+15873288469" className="hover:text-tlbs-cream">
-                  +1-587-328-8469
+                <a href={`mailto:${contactInfo.supportEmail}`} className="hover:text-tlbs-cream">
+                  {contactInfo.supportEmail}
                 </a>
               </li>
               <li>
-                <a href="tel:+2349085515969" className="hover:text-tlbs-cream">
-                  +234-908-551-5969
+                <a href={`tel:${contactInfo.phone}`} className="hover:text-tlbs-cream">
+                  {contactInfo.phone}
                 </a>
               </li>
             </ul>

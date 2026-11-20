@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { contactInfo } from '../data/contact';
 
 const SiteFooter: React.FC = () => {
   return (
@@ -79,18 +80,18 @@ const SiteFooter: React.FC = () => {
           <h4 className="text-[0.72rem] font-bold uppercase tracking-[0.14em] text-tlbs-gold-deep">Contact</h4>
           <ul className="mt-4 space-y-3 text-sm text-tlbs-cream/65">
             <li>
-              <a href="mailto:hello@thoughtleadershipbusinessschool.com" className="hover:text-tlbs-gold">
-                hello@thoughtleadershipbusinessschool.com
+              <a href={`mailto:${contactInfo.email}`} className="hover:text-tlbs-gold">
+                {contactInfo.email}
               </a>
             </li>
             <li>
-              <a href="tel:+15873288469" className="hover:text-tlbs-gold">
-                +1-587-328-8469
+              <a href={`mailto:${contactInfo.supportEmail}`} className="hover:text-tlbs-gold">
+                {contactInfo.supportEmail}
               </a>
             </li>
             <li>
-              <a href="tel:+2349085515969" className="hover:text-tlbs-gold">
-                +234-908-551-5969
+              <a href={`tel:${contactInfo.phone}`} className="hover:text-tlbs-gold">
+                {contactInfo.phone}
               </a>
             </li>
             <li>
@@ -103,9 +104,7 @@ const SiteFooter: React.FC = () => {
       </div>
       <div className="mx-auto mt-14 max-w-[1200px] border-t border-tlbs-border px-6 md:px-10 lg:px-16">
         <p className="pt-8 text-center text-xs text-tlbs-cream/45 md:text-left">
-          © 2026 Thought Leadership Business School. A brand of ENY Consulting Inc.{' '}
-          <span className="text-tlbs-cream/40">|</span> Privacy <span className="text-tlbs-cream/40">|</span>{' '}
-          Terms
+          © {new Date().getFullYear()} Thought Leadership Business School. A brand of ENY Consulting Inc.
         </p>
       </div>
     </footer>

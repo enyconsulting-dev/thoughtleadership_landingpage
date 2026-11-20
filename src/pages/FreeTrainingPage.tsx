@@ -2,6 +2,7 @@ import React from 'react';
 import TlbsEyebrow from '../components/tlbs/TlbsEyebrow';
 import TlbsShell from '../components/tlbs/TlbsShell';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
+import { pageSeo } from '../data/seo';
 
 const bullets = [
   'Why most experts stay invisible — and the positioning shift that changes everything',
@@ -12,10 +13,7 @@ const bullets = [
 ];
 
 const FreeTrainingPage: React.FC = () => {
-  useDocumentTitle(
-    'Free: 7 Steps to a Seven-Figure Thought Leadership Brand | TLBS',
-    'The STORY Framework. Learn the system behind a multi-seven-figure authority brand. Instant free access.'
-  );
+  useDocumentTitle(pageSeo['/free-training'].title, pageSeo['/free-training'].description);
 
   return (
     <div className="border-t border-tlbs-border py-16 md:py-24">
