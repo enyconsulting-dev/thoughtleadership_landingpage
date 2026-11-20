@@ -9,12 +9,10 @@ import ResourcesPreviewSection from '../components/tlbs/ResourcesPreviewSection'
 import FounderSection from '../components/tlbs/FounderSection';
 import CtaBanner from '../components/tlbs/CtaBanner';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
+import { pageSeo } from '../data/seo';
 
 const HomePage: React.FC = () => {
-  useDocumentTitle(
-    'Thought Leadership Business School | Build a Seven-Figure Authority Brand',
-    'For six-figure professionals building seven-figure brands through speaking, consulting, advisory, and media.'
-  );
+  useDocumentTitle(pageSeo['/'].title, pageSeo['/'].description);
 
   return (
     <div className="flex flex-col">

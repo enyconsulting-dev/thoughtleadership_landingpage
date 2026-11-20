@@ -15,3 +15,9 @@ Create a Cloudflare Turnstile widget for the production and preview hostnames, t
 Set the site key for each Vercel environment and redeploy so Vite includes it in the browser build. The API fails closed when the secret or webhook URL is missing. For local Vercel Function testing, use `vercel dev` with the same variables.
 
 The previous LeadConnector webhook URL was embedded in client-side source. Rotate/reissue it in LeadConnector and store the replacement only as `LEAD_WEBHOOK_URL`; removing it from the frontend does not invalidate the old URL.
+
+## Static SEO pages
+
+`npm run build` prerenders each public route into `dist/` so page headings and copy are present in the initial HTML without JavaScript. The route metadata in `src/data/seo.ts` is used for both prerendered head tags and the client-side metadata updates. `vercel.json` maps the site's clean URLs to the generated HTML files.
+
+To confirm the build output is crawlable, run `npm run build` and inspect a route with `curl` against the deployed URL, for example `curl -s https://thoughtleadershipbusinessschool.com/programs | grep -i 'Four Pathways to Thought Leadership'`.

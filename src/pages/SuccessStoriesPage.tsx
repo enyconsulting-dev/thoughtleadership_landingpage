@@ -5,12 +5,10 @@ import TlbsShell from '../components/tlbs/TlbsShell';
 import TlbsButton from '../components/tlbs/TlbsButton';
 import { testimonials } from '../data/tlbs';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
+import { pageSeo } from '../data/seo';
 
 const SuccessStoriesPage: React.FC = () => {
-  useDocumentTitle(
-    'Success Stories | TLBS',
-    'Results from professionals who committed to building seven-figure thought leadership brands.'
-  );
+  useDocumentTitle(pageSeo['/success-stories'].title, pageSeo['/success-stories'].description);
 
   return (
     <div className="border-t border-tlbs-border py-16 md:py-24">

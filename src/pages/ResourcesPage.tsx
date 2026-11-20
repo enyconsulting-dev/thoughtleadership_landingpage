@@ -5,16 +5,14 @@ import OptInDialog, { type OptInFormData } from '../components/OptInDialog';
 import { resources } from '../data/tlbs';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import { submitLead } from '../services/webhookService';
+import { pageSeo } from '../data/seo';
 
 const ResourcesPage: React.FC = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedResource, setSelectedResource] = useState<string>('');
 
-  useDocumentTitle(
-    'Resources | TLBS',
-    'Framework guides, audits, tools, and assessments to build seven-figure authority.'
-  );
+  useDocumentTitle(pageSeo['/resources'].title, pageSeo['/resources'].description);
 
   const handleResourceClick = (resourceTitle: string) => {
     setSelectedResource(resourceTitle);
